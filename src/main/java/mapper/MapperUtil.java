@@ -1,10 +1,7 @@
 package mapper;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -43,4 +40,19 @@ public class MapperUtil {
 
     return fields;
   }
+
+
+  public static Map<String, Object> getFieldsMap(final Mappable mappable) throws IllegalAccessException {
+    final Map<String, Object> map = new HashMap<>();
+    final List<Field> fields = getAllFields(mappable.getClass());
+    for (final Field field : fields) {
+      final boolean isFieldAccessible = field.isAccessible();
+      field.setAccessible(true);
+      map.put(field.getName(), field.get(mappable));
+      field.setAccessible(isFieldAccessible);
+    }
+    return map;
+  }
+
+
 }
