@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -76,7 +78,10 @@ public class MapperUtil {
 
   public static <SourceT extends Mappable, ResultT extends Mappable> ResultT map(SourceT source, Class<ResultT> resultType) throws ResultTypeInstantiationException {
 
+
     Class<?> sourceType = source.getClass();
+    logger.debug("Started mapping from source type '" + sourceType.getName() + "' to result type '" + resultType.getName() + "'.");
+
     ResultT result;
 
     try {
@@ -89,14 +94,18 @@ public class MapperUtil {
 
     List<Field> sourceFields = getAllFields(sourceType);
 
+    logger.debug("Found fields in the source type: " + sourceFields);
+
     List<Field> resultFields = getAllFields(resultType);
-    Stream<Field> resultFieldsStream = resultFields.stream();
+
+    logger.debug("Found fields in the result type: " + resultFields);
 
     for (Field sourceField :
         sourceFields) {
       String sourceFieldName = sourceField.getName();
-      Type sourceFieldType = sourceField.getType();
+      Class<?> sourceFieldType = sourceField.getType();
 
+      Stream<Field> resultFieldsStream = resultFields.stream();
       Optional<Field> resultFieldOptional = resultFieldsStream.
           filter(field ->
               field.getName() == sourceFieldName
@@ -104,13 +113,62 @@ public class MapperUtil {
           .findFirst();
 
       if (resultFieldOptional.isPresent()) {
+
+        String fieldNameCapitalized = StringUtil.capitalizeFirstLetter(sourceFieldName);
+
+
+        Method sourceGetMethod;
+        String sourceGetMethodName = "get" + fieldNameCapitalized;
         try {
-          Object sourceFieldValue = sourceField.get(source);
-          resultFieldOptional.get().set(result, sourceFieldValue);
-        } catch (IllegalAccessException e) {
-          logger.debug("Can not map source field " + sourceFieldName + " to result field " + sourceFieldName + ": " + e.getMessage());
+          sourceGetMethod = sourceType.getMethod(sourceGetMethodName);
+        } catch (NoSuchMethodException e) {
+          logger.debug("Field '" + sourceType.getName() + " " + sourceFieldName + "' does not have a getter method.");
           continue;
         }
+
+        Object sourceFieldVal;
+        try {
+          sourceFieldVal = sourceGetMethod.invoke(source, null);
+        } catch (InvocationTargetException e) {
+          logger.debug("Invokation of  '" + sourceType.getName() + " " + sourceGetMethodName + "' failed. " +
+              "Probably it requires at least 1 arg.");
+          continue;
+        } catch (IllegalAccessException e) {
+          logger.debug("Invokation of  '" + sourceType.getName() + " " + sourceGetMethodName + "' failed. " +
+              "It has restricted access.");
+          continue;
+        }catch (IllegalArgumentException e) {
+          logger.debug("Invokation of  '" + sourceType.getName() + " " + sourceGetMethodName + "' failed. " +
+              "Illegal argument.");
+          continue;
+        }
+
+        Method resultSetMethod;
+        String resultSetMethodName = "set" + fieldNameCapitalized;
+        try {
+          resultSetMethod = resultType.getMethod(resultSetMethodName, sourceFieldType);
+        } catch (NoSuchMethodException e) {
+          logger.debug("Field '" + resultType.getName() + " " + sourceFieldName + "' does not have a setter method.");
+          continue;
+        }
+
+
+        try {
+          resultSetMethod.invoke(result, sourceFieldVal);
+        } catch (InvocationTargetException e) {
+          logger.debug("Invokation of  '" + resultType.getName() + " " + resultSetMethodName + "' failed. " +
+              "Probably it requires at least 1 arg.");
+          continue;
+        } catch (IllegalAccessException e) {
+          logger.debug("Invokation of  '" + resultType.getName() + " " + resultSetMethodName + "' failed. " +
+              "It has restricted access.");
+          continue;
+        } catch (IllegalArgumentException e) {
+          logger.debug("Invokation of  '" + resultType.getName() + " " + resultSetMethodName + "' failed. " +
+              "Illegal argument.");
+          continue;
+        }
+
       }
     }
 
