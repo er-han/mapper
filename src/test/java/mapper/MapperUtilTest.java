@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 public class MapperUtilTest {
 
   @Test
-  public void getAllFields_whenHasSuperClass_getsSuperFields_returnsAllFields() {
+  public void shoulGetAllFields_whenHasSuperClass_getsSuperFields_returnsAllFields() {
     List<Field> fields = MapperUtil.getAllFields(TestChildClass.class);
     final int expectedTotalFieldsSize = 4;
 
@@ -32,7 +32,7 @@ public class MapperUtilTest {
   }
 
   @Test
-  public void getAllFields_whenHasSuperClass_getsSuperFields_returnsCorrectFieldNamesAndTypes() {
+  public void shoulGetAllFields_whenHasSuperClass_getsSuperFields_returnsCorrectFieldNamesAndTypes() {
     List<Field> fields = MapperUtil.getAllFields(TestChildClass.class);
 
     final HashMap<String, Type> expectedFieldNames = new HashMap<>();
@@ -48,7 +48,7 @@ public class MapperUtilTest {
   }
 
   @Test
-  public void getAllFields_whenHasNotSuperClass_returnsAllFields() {
+  public void shoulGetAllFields_whenHasNotSuperClass_returnsAllFields() {
     List<Field> fields = MapperUtil.getAllFields(TestSuperClass.class);
     final int expectedTotalFieldsSize = 2;
 
@@ -57,7 +57,7 @@ public class MapperUtilTest {
 
 
   @Test
-  public void getAllFields_whenHasNotSuperClass_returnsCorrectFieldNamesAndTypes() {
+  public void shoulGetAllFields_whenHasNotSuperClass_returnsCorrectFieldNamesAndTypes() {
     List<Field> fields = MapperUtil.getAllFields(TestSuperClass.class);
 
     final HashMap<String, Type> expectedFieldNames = new HashMap<>();
@@ -72,7 +72,7 @@ public class MapperUtilTest {
 
 
   @Test
-  public void getFieldsMap_whenHasSuperClass_returnsCorrectMap() throws IllegalAccessException {
+  public void shoulGetFieldsMap_whenHasSuperClass_returnsCorrectMap() throws IllegalAccessException {
     final String superField1Value = "string";
     final Integer superField2Value = 1;
     final Double childField1Value = 3.0;
@@ -98,7 +98,7 @@ public class MapperUtilTest {
   }
 
   @Test
-  public void getFieldsMap_whenHasNotSuperClass_returnsCorrectMap() throws IllegalAccessException {
+  public void shoulGetFieldsMap_whenHasNotSuperClass_returnsCorrectMap() throws IllegalAccessException {
     final String superField1Value = "string";
     final Integer superField2Value = 1;
 
@@ -118,7 +118,7 @@ public class MapperUtilTest {
 
 
   @Test
-  public void throwsException_whenResultTypeHasNotPublicNoArgConstructor() {
+  public void shoulThrowException_whenResultTypeHasNotPublicNoArgConstructor() {
 
     TestChildClass testChildObj = new TestChildClass();
     testChildObj.setSuperField1("string");
@@ -132,7 +132,7 @@ public class MapperUtilTest {
   }
 
   @Test
-  public void mapsAllFieldMatchedByNameAndByType_whenResultTypeHasPublicNoArgConstructor() {
+  public void shouldMapAllFieldsMatchedByNameAndByType_whenResultTypeHasPublicNoArgConstructor() {
     final Double childField1Value = 3.0;
     final List<Integer> childField2Value = new ArrayList<>();
     childField2Value.add(30);
@@ -145,6 +145,22 @@ public class MapperUtilTest {
       TestHasNoSuperClass testHasNoSuperClassObj = MapperUtil.map(testChildObj, TestHasNoSuperClass.class);
       assertEquals(childField1Value, testHasNoSuperClassObj.getChildField1());
       assertEquals(childField2Value, testHasNoSuperClassObj.getChildField2());
+    } catch (ResultTypeInstantiationException e) {
+      fail();
+    }
+
+  }
+
+  @Test
+  public void shouldNotMapAnyFieldNotMatchedByNameAndByType_whenResultTypeHasPublicNoArgConstructor() {
+    final String superField1Value = "string";
+
+    TestChildClass testChildObj = new TestChildClass();
+    testChildObj.setSuperField1(superField1Value);
+
+    try {
+      TestHasNoSuperClass testHasNoSuperClassObj = MapperUtil.map(testChildObj, TestHasNoSuperClass.class);
+      assertNull(testHasNoSuperClassObj.getSuperField1());
     } catch (ResultTypeInstantiationException e) {
       fail();
     }
