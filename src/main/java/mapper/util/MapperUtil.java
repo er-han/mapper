@@ -1,5 +1,8 @@
 package mapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -8,6 +11,8 @@ import java.util.stream.Collectors;
  * Created by erhan.karakaya on 3/10/2017.
  */
 public class MapperUtil {
+
+  private static final Logger logger = LoggerFactory.getLogger(MapperUtil.class);
 
   /**
    * Gets all public, private, protected fields of the given type.
@@ -65,4 +70,17 @@ public class MapperUtil {
   }
 
 
+  public static <SourceT extends Mappable, ResultT extends Mappable> ResultT map(SourceT source, Class<ResultT> resultType) {
+
+    Class<?> sourceType = source.getClass();
+    ResultT result;
+
+    try {
+      result = (ResultT) resultType.newInstance();
+    } catch (IllegalAccessException e) {
+
+    } catch (InstantiationException e) {
+      e.printStackTrace();
+    }
+  }
 }
