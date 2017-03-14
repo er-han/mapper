@@ -42,6 +42,16 @@ public class MapperUtil {
   }
 
 
+  /**
+   * Extracts a map of fields in given Mappable object.
+   * If given object type has a super class,
+   * the fields derived from the super class is extracted too.
+   *
+   * @param mappable The object which's fields are wanted to be extracted.
+   * @return a Map object which contains extracted fields names and values
+   * from the given object
+   * @throws IllegalAccessException
+   */
   public static Map<String, Object> getFieldsMap(final Mappable mappable) throws IllegalAccessException {
     final Map<String, Object> map = new HashMap<>();
     final List<Field> fields = getAllFields(mappable.getClass());
