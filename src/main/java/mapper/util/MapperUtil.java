@@ -6,8 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by erhan.karakaya on 3/10/2017.
@@ -83,6 +85,33 @@ public class MapperUtil {
       ResultTypeInstantiationException exception = new ResultTypeInstantiationException(resultType, e);
       logger.debug(exception.getMessage());
       throw exception;
+    }
+
+    List<Field> sourceFields = getAllFields(sourceType);
+
+    List<Field> resultFields = getAllFields(resultType);
+    Stream<Field> resultFieldsStream = resultFields.stream();
+
+    for (Field sourceField :
+        sourceFields) {
+      String sourceFieldName = sourceField.getName();
+      Type sourceFieldType = sourceField.getType();
+
+      Optional<Field> resultFieldOptional = resultFieldsStream.
+          filter(field ->
+              field.getName() == sourceFieldName
+                  && field.getType() == sourceFieldType)
+          .findFirst();
+
+      if (resultFieldOptional.isPresent()) {
+        try {
+          Object sourceFieldValue = sourceField.get(source);
+          resultFieldOptional.get().set(result, sourceFieldValue);
+        } catch (IllegalAccessException e) {
+          logger.debug("Can not map source field " + sourceFieldName + " to result field " + sourceFieldName + ": " + e.getMessage());
+          continue;
+        }
+      }
     }
 
     return result;
