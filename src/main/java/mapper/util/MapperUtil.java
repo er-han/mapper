@@ -1,5 +1,7 @@
-package mapper;
+package mapper.util;
 
+import mapper.Mappable;
+import mapper.exception.ResultTypeInstantiationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,17 +72,19 @@ public class MapperUtil {
   }
 
 
-  public static <SourceT extends Mappable, ResultT extends Mappable> ResultT map(SourceT source, Class<ResultT> resultType) {
+  public static <SourceT extends Mappable, ResultT extends Mappable> ResultT map(SourceT source, Class<ResultT> resultType) throws ResultTypeInstantiationException {
 
     Class<?> sourceType = source.getClass();
     ResultT result;
 
     try {
       result = (ResultT) resultType.newInstance();
-    } catch (IllegalAccessException e) {
-
-    } catch (InstantiationException e) {
-      e.printStackTrace();
+    } catch (Exception e) {
+      ResultTypeInstantiationException exception = new ResultTypeInstantiationException(resultType, e);
+      logger.debug(exception.getMessage());
+      throw exception;
     }
+
+    return result;
   }
 }
