@@ -90,10 +90,27 @@ public class MapperUtilTest {
     Map<String, Object> actualMap = MapperUtil.getFieldsMap(testChildObj);
 
     assertEquals(expectedMap, actualMap);
+  }
 
+  @Test
+  public void getFieldsMap_whenHasNotSuperClass_returnsCorrectMap() throws IllegalAccessException {
+    final String superField1Value = "string";
+    final Integer superField2Value = 1;
+
+    Map<String, Object> expectedMap = new HashMap<>();
+    expectedMap.put("superField1", superField1Value);
+    expectedMap.put("superField2", superField2Value);
+
+
+    TestSuperClass testSuperObj = new TestSuperClass();
+    testSuperObj.setSuperField1(superField1Value);
+    testSuperObj.setSuperField2(superField2Value);
+
+    Map<String, Object> actualMap = MapperUtil.getFieldsMap(testSuperObj);
+
+    assertEquals(expectedMap, actualMap);
   }
 
 
-  //todo: add public, protected and package private fields into test classes and write test methods for each access level
 
 }
