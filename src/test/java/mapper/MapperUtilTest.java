@@ -2,9 +2,11 @@ package mapper;
 
 import mapper.exception.ResultTypeInstantiationException;
 import mapper.packagefortesting.TestChildClass;
+import mapper.packagefortesting.TestHasNoSuperClass;
 import mapper.packagefortesting.TestHasNotPublicNoArgsConstructorClass;
 import mapper.packagefortesting.TestSuperClass;
 import mapper.util.MapperUtil;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
@@ -127,6 +129,26 @@ public class MapperUtilTest {
       fail("map method should throw exception");
     } catch (ResultTypeInstantiationException e) {
     }
+  }
+
+  @Test
+  public void mapsAllFieldMatchedByNameAndByType_whenResultTypeHasPublicNoArgConstructor() {
+    final Double childField1Value = 3.0;
+    final List<Integer> childField2Value = new ArrayList<>();
+    childField2Value.add(30);
+
+    TestChildClass testChildObj = new TestChildClass();
+    testChildObj.setChildField1(childField1Value);
+    testChildObj.setChildField2(childField2Value);
+
+    try {
+      TestHasNoSuperClass testHasNoSuperClassObj = MapperUtil.map(testChildObj, TestHasNoSuperClass.class);
+      assertEquals(childField1Value, testHasNoSuperClassObj.getChildField1());
+      assertEquals(childField2Value, testHasNoSuperClassObj.getChildField2());
+    } catch (ResultTypeInstantiationException e) {
+      fail();
+    }
+
   }
 
 
