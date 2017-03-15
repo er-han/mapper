@@ -18,7 +18,7 @@ import java.util.stream.Stream;
  */
 public class MapperUtil {
 
-  private static final Logger logger = LoggerFactory.getLogger(MapperUtil.class);
+  public static final Logger logger = LoggerFactory.getLogger(MapperUtil.class);
 
   /**
    * Gets all public, private, protected fields of the given type.
@@ -174,4 +174,5 @@ public class MapperUtil {
 
     return result;
   }
+
 }
