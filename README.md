@@ -4,13 +4,14 @@ A simple generic mapper to use in Java environment.
 ##How to use
 
 Mapper is developed for a handy usage. It is as simple as this:
->> Target target = Mapper.getMapperFrom(source).mapTo(Target.class);
+> Target target = Mapper.getMapperFrom(source).mapTo(Target.class);
 
 ###Important points
 * Source and target classes must implement `Mappable`.
 * Mapper maps fields which have the same name and type in both source and target types.
 * Only those fields which have `public` getters will be used when mapping from source.
 * Only those fields which have `public` setters will be used when mapping to target.
+* Target class must have a public no-args constructor.
 
 Example:
 
