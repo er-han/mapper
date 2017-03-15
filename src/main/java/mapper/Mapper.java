@@ -9,6 +9,7 @@ import mapper.util.MapperUtil;
  */
 public class Mapper implements MapTo {
   private Mappable source;
+
   private Mapper(Mappable source) {
     this.source = source;
   }
@@ -33,9 +34,8 @@ public class Mapper implements MapTo {
    *                   constructor. Otherwise a ResultTypeInstantiationException
    *                   will be thrown.
    * @param <T> Target type which implements Mappable
-   * @return a newly instantiated object of type T,
-   * mapped from source object.
-   * @throws ResultTypeInstantiationException
+   * @return a newly instantiated object of type T, mapped from source object.
+   * @throws ResultTypeInstantiationException throws this when resultType can not be instantiated.
    */
   @Override
   public <T extends Mappable> T mapTo(Class<T> resultType) throws ResultTypeInstantiationException {
