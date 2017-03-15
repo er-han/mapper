@@ -3,8 +3,9 @@ package mapper;
 import mapper.exception.ResultTypeInstantiationException;
 
 /**
- * Created by erhan.karakaya on 3/15/2017.
+ * This interface is used in Mapper class to
+ * supply more readible code.
  */
-public interface MapTo {
+interface MapTo {
   <T extends Mappable> T mapTo(Class<T> resultType) throws ResultTypeInstantiationException;
 }
