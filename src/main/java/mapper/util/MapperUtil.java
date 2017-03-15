@@ -1,17 +1,24 @@
 package mapper.util;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import mapper.Mappable;
 import mapper.exception.ResultTypeInstantiationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 /**
  * Created by erhan.karakaya on 3/10/2017.
@@ -59,11 +66,11 @@ public class MapperUtil {
    * the fields derived from the super class is extracted too.
    *
    * @param mappable The object which's fields are wanted to be extracted.
-   * @return a Map object which contains extracted fields names and values
-   * from the given object
-   * @throws IllegalAccessException
+   * @return a Map object which contains extracted fields names and values from the given object
+   * @throws IllegalAccessException throws this when can't get one of the field's value of mappable.
    */
-  public static Map<String, Object> getFieldsMap(final Mappable mappable) throws IllegalAccessException {
+  public static Map<String, Object> getFieldsMap(final Mappable mappable)
+      throws IllegalAccessException {
     final Map<String, Object> map = new HashMap<>();
     final List<Field> fields = getAllFields(mappable.getClass());
     for (final Field field : fields) {
@@ -75,19 +82,32 @@ public class MapperUtil {
     return map;
   }
 
-
-  public static <SourceT extends Mappable, ResultT extends Mappable> ResultT map(SourceT source, Class<ResultT> resultType) throws ResultTypeInstantiationException {
+  /**
+   * Maps given source object's suitable fields
+   * to a newly instantiated object of type resultType.
+   * @param source the object which's fields will be taken as map source.
+   * @param resultType the type which will be used to instantiate a target object.
+   * @param <SourceT> source object' type.
+   * @param <ResultT> result object's type.
+   * @return an object of type resultType.
+   * @throws ResultTypeInstantiationException throws this when can't instantiate a new object.
+   */
+  public static <SourceT extends Mappable, ResultT extends Mappable>
+      ResultT map(SourceT source, Class<ResultT> resultType)
+      throws ResultTypeInstantiationException {
 
 
     Class<?> sourceType = source.getClass();
-    logger.debug("Started mapping from source type '" + sourceType.getName() + "' to result type '" + resultType.getName() + "'.");
+    logger.debug("Started mapping from source type '"
+        + sourceType.getName() + "' to result type '" + resultType.getName() + "'.");
 
     ResultT result;
 
     try {
       result = (ResultT) resultType.newInstance();
     } catch (Exception e) {
-      ResultTypeInstantiationException exception = new ResultTypeInstantiationException(resultType, e);
+      ResultTypeInstantiationException exception =
+          new ResultTypeInstantiationException(resultType, e);
       logger.debug(exception.getMessage());
       throw exception;
     }
@@ -106,8 +126,8 @@ public class MapperUtil {
       Class<?> sourceFieldType = sourceField.getType();
 
       Stream<Field> resultFieldsStream = resultFields.stream();
-      Optional<Field> resultFieldOptional = resultFieldsStream.
-          filter(field ->
+      Optional<Field> resultFieldOptional = resultFieldsStream
+          .filter(field ->
               field.getName() == sourceFieldName
                   && field.getType() == sourceFieldType)
           .findFirst();
@@ -122,7 +142,8 @@ public class MapperUtil {
         try {
           sourceGetMethod = sourceType.getMethod(sourceGetMethodName);
         } catch (NoSuchMethodException e) {
-          logger.debug("Field '" + sourceType.getName() + " " + sourceFieldName + "' does not have a getter method.");
+          logger.debug("Field '" + sourceType.getName() + " "
+              + sourceFieldName + "' does not have a getter method.");
           continue;
         }
 
@@ -130,16 +151,19 @@ public class MapperUtil {
         try {
           sourceFieldVal = sourceGetMethod.invoke(source, null);
         } catch (InvocationTargetException e) {
-          logger.debug("Invokation of  '" + sourceType.getName() + " " + sourceGetMethodName + "' failed. " +
-              "Probably it requires at least 1 arg.");
+          logger.debug("Invokation of  '" + sourceType.getName()
+              + " " + sourceGetMethodName + "' failed. "
+              + "Probably it requires at least 1 arg.");
           continue;
         } catch (IllegalAccessException e) {
-          logger.debug("Invokation of  '" + sourceType.getName() + " " + sourceGetMethodName + "' failed. " +
-              "It has restricted access.");
+          logger.debug("Invokation of  '"
+              + sourceType.getName() + " " + sourceGetMethodName + "' failed. "
+              + "It has restricted access.");
           continue;
-        }catch (IllegalArgumentException e) {
-          logger.debug("Invokation of  '" + sourceType.getName() + " " + sourceGetMethodName + "' failed. " +
-              "Illegal argument.");
+        } catch (IllegalArgumentException e) {
+          logger.debug("Invokation of  '"
+              + sourceType.getName() + " " + sourceGetMethodName + "' failed. "
+              + "Illegal argument.");
           continue;
         }
 
@@ -148,7 +172,8 @@ public class MapperUtil {
         try {
           resultSetMethod = resultType.getMethod(resultSetMethodName, sourceFieldType);
         } catch (NoSuchMethodException e) {
-          logger.debug("Field '" + resultType.getName() + " " + sourceFieldName + "' does not have a setter method.");
+          logger.debug("Field '" + resultType.getName() + " "
+              + sourceFieldName + "' does not have a setter method.");
           continue;
         }
 
@@ -156,16 +181,19 @@ public class MapperUtil {
         try {
           resultSetMethod.invoke(result, sourceFieldVal);
         } catch (InvocationTargetException e) {
-          logger.debug("Invokation of  '" + resultType.getName() + " " + resultSetMethodName + "' failed. " +
-              "Probably it requires at least 1 arg.");
+          logger.debug("Invokation of  '" + resultType.getName()
+              + " " + resultSetMethodName + "' failed. "
+              + "Probably it requires at least 1 arg.");
           continue;
         } catch (IllegalAccessException e) {
-          logger.debug("Invokation of  '" + resultType.getName() + " " + resultSetMethodName + "' failed. " +
-              "It has restricted access.");
+          logger.debug("Invokation of  '" + resultType.getName()
+              + " " + resultSetMethodName + "' failed. "
+              + "It has restricted access.");
           continue;
         } catch (IllegalArgumentException e) {
-          logger.debug("Invokation of  '" + resultType.getName() + " " + resultSetMethodName + "' failed. " +
-              "Illegal argument.");
+          logger.debug("Invokation of  '" + resultType.getName()
+              + " " + resultSetMethodName + "' failed. "
+              + "Illegal argument.");
           continue;
         }
 
