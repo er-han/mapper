@@ -1,16 +1,18 @@
 package mapper;
 
-import mapper.exception.ResultTypeInstantiationException;
-import mapper.packagefortesting.TestChildClass;
-import mapper.packagefortesting.TestHasNoSuperClass;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import mapper.exception.ResultTypeInstantiationException;
+import mapper.packagefortesting.TestChildClass;
+import mapper.packagefortesting.TestHasNoSuperClass;
+
+import org.junit.Before;
+import org.junit.Test;
+
 
 /**
  * Created by erhan.karakaya on 3/15/2017.
@@ -23,8 +25,12 @@ public class MapperTest {
   private static final String superField1Value = "STR";
   private static final Integer superField2Value = 99;
   private static final Double childField1Value = 120.3;
-  private static final List<Integer> childField2Value = new ArrayList<>(Arrays.asList(6, 8, 9, 445));
+  private static final List<Integer> childField2Value =
+      new ArrayList<>(Arrays.asList(6, 8, 9, 445));
 
+  /**
+   * Setting mapFromObj with initial values.
+   */
   @Before
   public void setUp() {
     mapFromObj = new TestChildClass();
