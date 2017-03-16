@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by erhan.karakaya on 3/10/2017.
  */
-public class TestChildClass extends TestSuperClass{
+public class TestChildClass extends TestSuperClass {
   private Double childField1;
   private List<Integer> childField2;
 

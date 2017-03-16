@@ -1,8 +1,8 @@
 package mapper.packagefortesting;
 
-import mapper.Mappable;
-
 import java.util.List;
+
+import mapper.Mappable;
 
 /**
  * Created by erhan.karakaya on 3/14/2017.
