@@ -3,6 +3,8 @@ package mapper;
 import mapper.exception.ResultTypeInstantiationException;
 import mapper.util.MapperUtil;
 
+import java.util.function.Supplier;
+
 /**
  * Mapper is used for mapping from a Mappable source object
  * to another Mappable object in an easy and readible way.
@@ -40,5 +42,15 @@ public class Mapper implements MapTo {
   @Override
   public <T extends Mappable> T mapTo(Class<T> resultType) throws ResultTypeInstantiationException {
     return MapperUtil.map(source, resultType);
+  }
+
+  @Override
+  public <T extends Mappable> T mapTo(Supplier<T> supplier) {
+    if (supplier == null)
+    {
+      return null;
+    }
+    T result = supplier.get();
+    return MapperUtil.map(source, result);
   }
 }
