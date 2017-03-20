@@ -13,13 +13,13 @@ import mapper.util.MapperUtil;
  */
 public class Mapper implements MapTo, MapToList {
   private Mappable source;
-  private List<Mappable> sources;
+  private List<? extends Mappable> sources;
 
   private Mapper(Mappable source) {
     this.source = source;
   }
 
-  private Mapper(List<Mappable> sources) {
+  private Mapper(List<? extends Mappable> sources) {
     this.sources = sources;
   }
 
@@ -42,7 +42,7 @@ public class Mapper implements MapTo, MapToList {
    *                as source when mapping.
    * @return a new Mapper instance.
    */
-  public static MapToList getMapperFromList(List<Mappable> sources) {
+  public static MapToList getMapperFromList(List<? extends Mappable> sources) {
     return new Mapper(sources);
   }
 
