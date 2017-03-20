@@ -112,10 +112,34 @@ public class MapperUtil {
       throw exception;
     }
 
+    result = map(source, result);
+
+    return result;
+  }
+
+
+
+  /**
+   * Maps from source to result.
+   * Both source and result must be Mappable.
+   *
+   * @param source the object which's fields will be taken as map source.
+   * @param result the object which's fields will be taken as map target.
+   * @param <SourceT> source object' type.
+   * @param <ResultT> result object's type.
+   * @return an object of type resultType.
+   */
+  public static <SourceT extends Mappable, ResultT extends Mappable> ResultT
+      map(SourceT source, ResultT result) {
+    if (source == null || result == null) {
+      return null;
+    }
+    Class<?> sourceType = source.getClass();
     List<Field> sourceFields = getAllFields(sourceType);
 
     logger.debug("Found fields in the source type: " + sourceFields);
 
+    Class<?> resultType = result.getClass();
     List<Field> resultFields = getAllFields(resultType);
 
     logger.debug("Found fields in the result type: " + resultFields);
@@ -199,7 +223,6 @@ public class MapperUtil {
 
       }
     }
-
     return result;
   }
 
