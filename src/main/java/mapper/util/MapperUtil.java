@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,7 +18,6 @@ import mapper.Mappable;
 import mapper.exception.ResultTypeInstantiationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 
 /**
@@ -85,10 +85,11 @@ public class MapperUtil {
   /**
    * Maps given source object's suitable fields
    * to a newly instantiated object of type resultType.
-   * @param source the object which's fields will be taken as map source.
+   *
+   * @param source     the object which's fields will be taken as map source.
    * @param resultType the type which will be used to instantiate a target object.
-   * @param <SourceT> source object' type.
-   * @param <ResultT> result object's type.
+   * @param <SourceT>  source object' type.
+   * @param <ResultT>  result object's type.
    * @return an object of type resultType.
    * @throws ResultTypeInstantiationException throws this when can't instantiate a new object.
    */
@@ -118,13 +119,12 @@ public class MapperUtil {
   }
 
 
-
   /**
    * Maps from source to result.
    * Both source and result must be Mappable.
    *
-   * @param source the object which's fields will be taken as map source.
-   * @param result the object which's fields will be taken as map target.
+   * @param source    the object which's fields will be taken as map source.
+   * @param result    the object which's fields will be taken as map target.
    * @param <SourceT> source object' type.
    * @param <ResultT> result object's type.
    * @return an object of type resultType.
@@ -224,6 +224,64 @@ public class MapperUtil {
       }
     }
     return result;
+  }
+
+  public static <SourceT extends Mappable, ResultT extends Mappable> ResultT
+      map(SourceT source, Supplier<ResultT> supplier) {
+    return map(source, supplier.get());
+  }
+
+  /**
+   *
+   * @param sources A list of object's to be mapped from.
+   * @param resultType the type which will be used to instantiate a target object.
+   * @param <SourceT> source object' type.
+   * @param <ResultT> result object's type.
+   * @return A List&lt;ResultT&gt; object of type resultType.
+   * @throws ResultTypeInstantiationException throws this when can't instantiate a new object.
+   */
+  public static <SourceT extends Mappable, ResultT extends Mappable> List<ResultT>
+      map(List<SourceT> sources, Class<ResultT> resultType)
+      throws ResultTypeInstantiationException {
+
+    try {
+      ResultT resultT = resultType.newInstance();
+    } catch (Exception e) {
+      ResultTypeInstantiationException exception =
+          new ResultTypeInstantiationException(resultType, e);
+      logger.debug(exception.getMessage());
+      throw exception;
+    }
+
+    return map(sources, () -> {
+      try {
+        return resultType.newInstance();
+      } catch (Exception e) {
+        return null;
+      }
+    });
+
+  }
+
+
+  /**
+   *
+   * @param sources A list of object's to be mapped from.
+   * @param supplier Target type's supplier function.
+   * @param <SourceT> source object' type.
+   * @param <ResultT> result object's type.
+   * @return A List&lt;ResultT&gt; object of type resultType.
+   */
+  public static <SourceT extends Mappable, ResultT extends Mappable> List<ResultT>
+      map(List<SourceT> sources, Supplier<ResultT> supplier) {
+    if (sources == null || supplier == null) {
+      return null;
+    }
+
+    List<ResultT> results = new ArrayList<ResultT>();
+    sources.forEach(source -> results.add(map(source, supplier)));
+
+    return results;
   }
 
 }
