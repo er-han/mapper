@@ -6,6 +6,14 @@ A simple generic mapper to use in Java environment.
 Mapper is developed for a handy usage. It is as simple as this:
 > Target target = Mapper.getMapperFrom(source).mapTo(Target.class);
 
+or using with Supplier:
+
+> Target target = Mapper.getMapperFrom(source).mapTo(Target::new);
+
+and Supplier with arg(s):
+
+> Target target = Mapper.getMapperFrom(source).mapTo(() -> new Target(2,"abc"));
+
 ###Important points
 * Source and target classes must implement `Mappable`.
 * Mapper maps fields which have the same name and type in both source and target types.
