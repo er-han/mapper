@@ -51,4 +51,16 @@ public class MapperTest {
       e.printStackTrace();
     }
   }
+
+  @Test
+  public void shouldMap_whenSupplierIsGiven() {
+    mapToObj = Mapper.getMapperFrom(mapFromObj).mapTo(TestHasNoSuperClass::new);
+    assertNotNull(mapToObj);
+  }
+
+  @Test
+  public void shouldMap_whenSupplierIsGiven_andSupplierHasArgument() {
+    mapToObj = Mapper.getMapperFrom(mapFromObj).mapTo(() -> new TestHasNoSuperClass(2.0));
+    assertNotNull(mapToObj);
+  }
 }

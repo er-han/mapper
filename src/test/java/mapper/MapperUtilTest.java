@@ -178,4 +178,35 @@ public class MapperUtilTest {
   }
 
 
+  @Test
+  public void shouldMap_whenResultObjectIsGiven() {
+    final Double childField1Value = 3.0;
+    final List<Integer> childField2Value = new ArrayList<>();
+    childField2Value.add(30);
+
+    TestChildClass testChildObj = new TestChildClass();
+    testChildObj.setChildField1(childField1Value);
+    testChildObj.setChildField2(childField2Value);
+
+    TestHasNoSuperClass testHasNoSuperClassObj = new TestHasNoSuperClass();
+    testHasNoSuperClassObj = MapperUtil.map(testChildObj, testHasNoSuperClassObj);
+    assertEquals(childField1Value, testHasNoSuperClassObj.getChildField1());
+    assertEquals(childField2Value, testHasNoSuperClassObj.getChildField2());
+  }
+
+  @Test
+  public void shouldNotThrowException_whenResultObjectIsNull() {
+    final Double childField1Value = 3.0;
+    final List<Integer> childField2Value = new ArrayList<>();
+    childField2Value.add(30);
+
+    TestChildClass testChildObj = new TestChildClass();
+    testChildObj.setChildField1(childField1Value);
+    testChildObj.setChildField2(childField2Value);
+
+    TestHasNoSuperClass testHasNoSuperClassObj = null;
+    testHasNoSuperClassObj = MapperUtil.map(testChildObj, testHasNoSuperClassObj);
+    assertNull(testHasNoSuperClassObj);
+  }
+
 }

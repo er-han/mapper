@@ -12,6 +12,16 @@ public class TestHasNoSuperClass implements Mappable {
   private List<Integer> childField2;
   private Integer superField1;
 
+  public TestHasNoSuperClass(){
+    //no-args constructor
+  }
+
+
+  public TestHasNoSuperClass(Double childField1){
+    this.childField1 = childField1;
+  }
+
+
   public Integer getSuperField1() {
     return superField1;
   }
