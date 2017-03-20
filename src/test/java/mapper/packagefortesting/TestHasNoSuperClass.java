@@ -17,7 +17,7 @@ public class TestHasNoSuperClass implements Mappable {
   }
 
 
-  public TestHasNoSuperClass(Double childField1){
+  public TestHasNoSuperClass(Double childField1) {
     this.childField1 = childField1;
   }
 

@@ -1,8 +1,9 @@
 package mapper;
 
+import java.util.function.Supplier;
+
 import mapper.exception.ResultTypeInstantiationException;
 
-import java.util.function.Supplier;
 
 /**
  * This interface is used in Mapper class to
@@ -10,5 +11,6 @@ import java.util.function.Supplier;
  */
 public interface MapTo {
   <T extends Mappable> T mapTo(Class<T> resultType) throws ResultTypeInstantiationException;
+
   <T extends Mappable> T mapTo(Supplier<T> supplier);
 }

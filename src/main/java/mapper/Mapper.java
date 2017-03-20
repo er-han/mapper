@@ -1,9 +1,10 @@
 package mapper;
 
+import java.util.function.Supplier;
+
 import mapper.exception.ResultTypeInstantiationException;
 import mapper.util.MapperUtil;
 
-import java.util.function.Supplier;
 
 /**
  * Mapper is used for mapping from a Mappable source object
@@ -46,8 +47,7 @@ public class Mapper implements MapTo {
 
   @Override
   public <T extends Mappable> T mapTo(Supplier<T> supplier) {
-    if (supplier == null)
-    {
+    if (supplier == null) {
       return null;
     }
     T result = supplier.get();
