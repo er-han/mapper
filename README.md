@@ -4,15 +4,21 @@ A simple generic mapper to use in Java environment.
 ##How to use
 
 Mapper is developed for a handy usage. It is as simple as this:
-> Target target = Mapper.getMapperFrom(source).mapTo(Target.class); //requires a public no-args constructor
 
-or using with Supplier:
+* Using with Supplier:
 
 > Target target = Mapper.getMapperFrom(source).mapTo(Target::new);
 
-and Supplier with arg(s):
+* Supplier with arg(s):
 
 > Target target = Mapper.getMapperFrom(source).mapTo(() -> new Target(2,"abc"));
+
+* Without supplier:
+> Target target = Mapper.getMapperFrom(source).mapTo(Target.class); //requires a public no-args constructor
+
+* Mapping with Lists:
+
+> List<Target> targets = Mapper.getMapperFrom(sources).mapTo(Target::new);
 
 ###Important points
 * Source and target classes must implement `Mappable`.
