@@ -42,7 +42,7 @@ public class Mapper implements MapTo, MapToList {
    *                as source when mapping.
    * @return a new Mapper instance.
    */
-  public static MapTo getMapperFromList(List<Mappable> sources) {
+  public static MapToList getMapperFromList(List<Mappable> sources) {
     return new Mapper(sources);
   }
 
