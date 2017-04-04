@@ -10,8 +10,8 @@ import mapper.exception.ResultTypeInstantiationException;
  * Created by erhan.karakaya on 3/20/2017.
  */
 public interface MapToList {
-  <T extends Mappable> List<T> mapToList(Class<T> resultType)
+  <T extends Mappable> Iterable<T> mapToList(Class<T> resultType)
       throws ResultTypeInstantiationException;
 
-  <T extends Mappable> List<T> mapToList(Supplier<T> supplier);
+  <T extends Mappable> Iterable<T> mapToList(Supplier<T> supplier);
 }

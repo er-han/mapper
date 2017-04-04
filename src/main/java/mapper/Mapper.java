@@ -13,13 +13,13 @@ import mapper.util.MapperUtil;
  */
 public class Mapper implements MapTo, MapToList {
   private Mappable source;
-  private List<? extends Mappable> sources;
+  private Iterable<? extends Mappable> sources;
 
   private Mapper(Mappable source) {
     this.source = source;
   }
 
-  private Mapper(List<? extends Mappable> sources) {
+  private Mapper(Iterable<? extends Mappable> sources) {
     this.sources = sources;
   }
 
@@ -42,7 +42,7 @@ public class Mapper implements MapTo, MapToList {
    *                as source when mapping.
    * @return a new Mapper instance.
    */
-  public static MapToList getMapperFromList(List<? extends Mappable> sources) {
+  public static MapToList getMapperFromList(Iterable<? extends Mappable> sources) {
     return new Mapper(sources);
   }
 
@@ -70,13 +70,13 @@ public class Mapper implements MapTo, MapToList {
   }
 
   @Override
-  public <T extends Mappable> List<T> mapToList(Class<T> resultType)
+  public <T extends Mappable> Iterable<T> mapToList(Class<T> resultType)
       throws ResultTypeInstantiationException {
     return MapperUtil.map(sources, resultType);
   }
 
   @Override
-  public <T extends Mappable> List<T> mapToList(Supplier<T> supplier) {
+  public <T extends Mappable> Iterable<T> mapToList(Supplier<T> supplier) {
     return MapperUtil.map(sources, supplier);
   }
 

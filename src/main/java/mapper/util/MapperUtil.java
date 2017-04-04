@@ -240,8 +240,8 @@ public class MapperUtil {
    * @return A List&lt;ResultT&gt; object of type resultType.
    * @throws ResultTypeInstantiationException throws this when can't instantiate a new object.
    */
-  public static <SourceT extends Mappable, ResultT extends Mappable> List<ResultT>
-      map(List<SourceT> sources, Class<ResultT> resultType)
+  public static <SourceT extends Mappable, ResultT extends Mappable> Iterable<ResultT>
+      map(Iterable<SourceT> sources, Class<ResultT> resultType)
       throws ResultTypeInstantiationException {
 
     try {
@@ -272,8 +272,8 @@ public class MapperUtil {
    * @param <ResultT> result object's type.
    * @return A List&lt;ResultT&gt; object of type resultType.
    */
-  public static <SourceT extends Mappable, ResultT extends Mappable> List<ResultT>
-      map(List<SourceT> sources, Supplier<ResultT> supplier) {
+  public static <SourceT extends Mappable, ResultT extends Mappable> Iterable<ResultT>
+      map(Iterable<SourceT> sources, Supplier<ResultT> supplier) {
     if (sources == null || supplier == null) {
       return null;
     }
